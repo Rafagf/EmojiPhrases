@@ -23,6 +23,10 @@ fun Application.module(testing: Boolean = false) {
     routing {
         home()
         about()
+        phrases(repository)
+
+        //Api
+        phrase(repository)
     }
 }
 
