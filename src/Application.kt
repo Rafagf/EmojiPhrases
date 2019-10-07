@@ -45,6 +45,9 @@ private fun Application.installFeatures() {
     install(ContentNegotiation) {
         moshi()
     }
+    install(FreeMarker) {
+        templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
+    }
 }
 
 const val API_VERSION = "/api/v1"
