@@ -42,4 +42,9 @@ private fun Application.installFeatures() {
 
         }
     }
+    install(ContentNegotiation) {
+        moshi()
+    }
 }
+
+const val API_VERSION = "/api/v1"
