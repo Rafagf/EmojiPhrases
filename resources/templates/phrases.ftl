@@ -1,5 +1,6 @@
 <html>
     <body>
+    <div>${displayName}</div>
     <ul>
         <#list phrases as phrase>
         <li>${phrase}</li>

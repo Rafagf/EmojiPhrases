@@ -1,11 +1,13 @@
 package com.rafag
 
 import com.rafag.api.*
+import com.rafag.model.*
 import com.rafag.repository.*
 import com.rafag.webapp.*
 import com.ryanharter.ktor.moshi.*
 import freemarker.cache.*
 import io.ktor.application.*
+import io.ktor.auth.*
 import io.ktor.features.*
 import io.ktor.freemarker.*
 import io.ktor.http.*
@@ -47,6 +49,18 @@ private fun Application.installFeatures() {
     }
     install(FreeMarker) {
         templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
+    }
+    install(Authentication) {
+        basic(name = "auth") {
+            realm = "ktor server"
+            validate { credentials ->
+                if (credentials.password == "${credentials.name}123") {
+                    User(credentials.name)
+                } else {
+                    null
+                }
+            }
+        }
     }
 }
 
