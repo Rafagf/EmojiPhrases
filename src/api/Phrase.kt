@@ -16,7 +16,7 @@ fun Route.phrase(repository: Repository) {
     authenticate("auth") {
         post(PHRASE_ENDPOINT) {
             val request = call.receive<Request>()
-            val phrase = repository.add(EmojiPhrase(request.emoji, request.phrase))
+            val phrase = repository.add(request.emoji, request.phrase)
             call.respond(phrase)
         }
     }

@@ -23,7 +23,8 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
     installFeatures()
-    val repository = Repository(MemoryDataSource())
+    DatabaseFactory.init()
+    val repository = EmojiPhraseRepository()
     routing {
         static("/static") {
             resources("images")

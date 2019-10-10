@@ -40,7 +40,7 @@ fun Route.phrases(repository: Repository) {
                 "add" -> {
                     val emoji = params["emoji"] ?: throw IllegalArgumentException("Missing argument: emoji")
                     val phrase = params["phrase"] ?: throw IllegalArgumentException("Missing argument: phrase")
-                    repository.add(EmojiPhrase(emoji, phrase))
+                    repository.add(emoji, phrase)
                 }
             }
 
