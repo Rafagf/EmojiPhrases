@@ -1,19 +1,24 @@
 package com.rafag.webapp
 
+import com.rafag.*
 import com.rafag.model.*
 import com.rafag.repository.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.freemarker.*
+import io.ktor.locations.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 
 const val PHRASES = "phrases"
 
+@Location(PHRASES)
+class Phrases
+
 fun Route.phrases(repository: Repository) {
     authenticate("auth") {
-        get(PHRASES) {
+        get<Phrases> {
             val user = call.authentication.principal as User
             val phrases = repository.phrases()
             call.respond(
@@ -24,7 +29,7 @@ fun Route.phrases(repository: Repository) {
             )
         }
 
-        post(PHRASES) {
+        post<Phrases> {
             val params = call.receiveParameters()
             val action = params["action"] ?: throw IllegalArgumentException("Missing action")
             when (action) {
@@ -39,7 +44,7 @@ fun Route.phrases(repository: Repository) {
                 }
             }
 
-            call.respondRedirect(PHRASES)
+            call.redirect(Phrases())
         }
     }
 }

@@ -12,6 +12,7 @@ import io.ktor.features.*
 import io.ktor.freemarker.*
 import io.ktor.http.*
 import io.ktor.http.content.*
+import io.ktor.locations.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import webapp.*
@@ -50,6 +51,8 @@ private fun Application.installFeatures() {
     install(ContentNegotiation) {
         moshi()
     }
+
+    install(Locations)
     install(FreeMarker) {
         templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
     }
@@ -68,3 +71,7 @@ private fun Application.installFeatures() {
 }
 
 const val API_VERSION = "/api/v1"
+
+suspend fun ApplicationCall.redirect(location: Any) {
+    respondRedirect(application.locations.href(location))
+}
