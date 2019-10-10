@@ -11,6 +11,7 @@ import io.ktor.auth.*
 import io.ktor.features.*
 import io.ktor.freemarker.*
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import webapp.*
@@ -23,6 +24,9 @@ fun Application.module(testing: Boolean = false) {
     installFeatures()
     val repository = Repository(MemoryDataSource())
     routing {
+        static("/static") {
+            resources("images")
+        }
         home()
         about()
         phrases(repository)
@@ -41,7 +45,6 @@ private fun Application.installFeatures() {
                 ContentType.Text.Plain,
                 HttpStatusCode.InternalServerError
             )
-
         }
     }
     install(ContentNegotiation) {
