@@ -53,15 +53,24 @@ fun Route.signUp(db: Repository, hashFunction: (String) -> String) {
                     db.createUser(newUser)
                 } catch (e: Throwable) {
                     when {
-                        db.user(userId) != null call.redirect(signUpError.copy("Username $userId is already registered"))
-                        }
+                        db.user(userId) != null -> call.redirect(signUpError.copy("Username $userId is already registered"))
+                        db.userByEmail(email) != null -> call.redirect(signUpError.copy("Email $email is already registered"))
+                        else -> call.redirect(signUpError.copy(error = "Failed to register"))
                     }
                 }
+
+                call.sessions.set(EpSession(userId))
+                call.redirect(Phrases())
             }
         }
     }
 
     get<SignUp> {
-        call.respond(FreeMarkerContent("signup.ftl", null))
+        val user = call.sessions.get<EpSession>()?.let { session -> db.user(session.userId) }
+        if (user != null) {
+            call.redirect(Phrases())
+        } else {
+            call.respond(FreeMarkerContent("signup.ftl", mapOf("error" to it.error)))
+        }
     }
 }
