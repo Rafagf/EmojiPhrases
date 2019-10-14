@@ -7,6 +7,7 @@ interface Repository {
     suspend fun phrase(id: String): EmojiPhrase?
     suspend fun phrase(id: Int): EmojiPhrase?
     suspend fun phrases(): List<EmojiPhrase>
+    suspend fun phrases(userId: String): List<EmojiPhrase>
     suspend fun remove(id: String)
     suspend fun remove(id: Int)
     suspend fun clear()

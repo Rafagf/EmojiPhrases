@@ -11,6 +11,7 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.sessions.*
+import webapp.*
 
 const val SIGN_UP = "/signup"
 
@@ -42,7 +43,7 @@ fun Route.signUp(db: Repository, hashFunction: (String) -> String) {
 
         when {
             userId.length < MIN_USER_ID_LENGTH -> call.redirect(signUpError.copy(error = "UserId should be at least $MIN_USER_ID_LENGTH long"))
-            password.length < MIN_PASSWORD__LENGTH -> call.redirect(signUpError.copy(error = "Password should be at least $MIN_PASSWORD__LENGTH long"))
+            password.length < MIN_PASSWORD_LENGTH -> call.redirect(signUpError.copy(error = "Password should be at least $MIN_PASSWORD_LENGTH long"))
             !userNameValid(displayName) -> call.redirect(signUpError.copy(error = "Username should consist of digits, letters, dots or underscores"))
             db.user(userId) != null -> call.redirect(signUpError.copy("Username $userId is already registered"))
             else -> {
@@ -68,7 +69,7 @@ fun Route.signUp(db: Repository, hashFunction: (String) -> String) {
     get<SignUp> {
         val user = call.sessions.get<EpSession>()?.let { session -> db.user(session.userId) }
         if (user != null) {
-            call.redirect(Phrases())
+            call.redirect(Home())
         } else {
             call.respond(FreeMarkerContent("signup.ftl", mapOf("error" to it.error)))
         }

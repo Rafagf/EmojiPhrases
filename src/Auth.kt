@@ -5,7 +5,7 @@ import javax.crypto.*
 import javax.crypto.spec.*
 
 const val MIN_USER_ID_LENGTH = 4
-const val MIN_PASSWORD__LENGTH = 6
+const val MIN_PASSWORD_LENGTH = 6
 
 val hashKey = hex(System.getenv("SECRET_KEY"))
 
