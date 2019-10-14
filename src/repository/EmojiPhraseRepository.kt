@@ -6,9 +6,11 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.*
 
 class EmojiPhraseRepository : Repository {
-    override suspend fun add(emojiValue: String, phraseValue: String) {
+
+    override suspend fun add(userId: String, emojiValue: String, phraseValue: String) {
         transaction {
             EmojiPhrases.insert {
+                it[user] = userId
                 it[emoji] = emojiValue
                 it[phrase] = phraseValue
             }
@@ -51,11 +53,54 @@ class EmojiPhraseRepository : Repository {
         }
     }
 
+    override suspend fun user(userId: String, hash: String?): User? {
+        val user = dbQuery {
+            Users.select {
+                (Users.id eq userId)
+            }.mapNotNull {
+                it.toUser()
+            }.singleOrNull()
+        }
+
+        return when {
+            user == null -> null
+            hash == null -> user
+            user.passwordHash == hash -> user
+            else -> null
+        }
+    }
+
+    override suspend fun userByEmail(email: String) = dbQuery {
+        Users.select { Users.email.eq(email) }
+            .mapNotNull {
+                it.toUser()
+            }.singleOrNull()
+    }
+
+    override suspend fun createUser(user: User) = dbQuery {
+        Users.insert {
+            it[id] = user.userId
+            it[displayName] = user.displayName
+            it[email] = user.email
+            it[passwordHash] = user.passwordHash
+        }
+        Unit
+    }
+
     private fun ResultRow.toEmojiPhrase(): EmojiPhrase {
         return EmojiPhrase(
             id = this[EmojiPhrases.id].value,
+            userId = this[EmojiPhrases.user],
             emoji = this[EmojiPhrases.emoji],
             phrase = this[EmojiPhrases.phrase]
         )
     }
+
+    private fun ResultRow.toUser(): User =
+        User(
+            userId = this[Users.id],
+            email = this[Users.email],
+            displayName = this[Users.displayName],
+            passwordHash = this[Users.passwordHash]
+        )
 }

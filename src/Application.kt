@@ -23,6 +23,7 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
     installFeatures()
+    val hashFunction = { s: String -> hash(s) }
     DatabaseFactory.init()
     val repository = EmojiPhraseRepository()
     routing {
@@ -32,6 +33,9 @@ fun Application.module(testing: Boolean = false) {
         home()
         about()
         phrases(repository)
+        signIn(repository, hashFunction)
+        signOut()
+        signUp(repository, hashFunction)
 
         //Api
         phrase(repository)
@@ -56,18 +60,6 @@ private fun Application.installFeatures() {
     install(Locations)
     install(FreeMarker) {
         templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
-    }
-    install(Authentication) {
-        basic(name = "auth") {
-            realm = "ktor server"
-            validate { credentials ->
-                if (credentials.password == "${credentials.name}123") {
-                    User(credentials.name)
-                } else {
-                    null
-                }
-            }
-        }
     }
 }
 
