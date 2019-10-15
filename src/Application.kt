@@ -8,6 +8,7 @@ import com.ryanharter.ktor.moshi.*
 import freemarker.cache.*
 import io.ktor.application.*
 import io.ktor.auth.*
+import io.ktor.auth.jwt.*
 import io.ktor.features.*
 import io.ktor.freemarker.*
 import io.ktor.http.*
@@ -26,10 +27,10 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
-    installFeatures()
     val hashFunction = { s: String -> hash(s) }
     DatabaseFactory.init()
     val repository = EmojiPhraseRepository()
+    installFeatures(repository)
     routing {
         static("/static") {
             resources("images")
@@ -43,10 +44,11 @@ fun Application.module(testing: Boolean = false) {
 
         //Api
         phrase(repository)
+        login(repository, JwtService)
     }
 }
 
-private fun Application.installFeatures() {
+private fun Application.installFeatures(db: Repository) {
     install(DefaultHeaders)
     install(StatusPages) {
         exception<Throwable> { exception ->
@@ -71,6 +73,20 @@ private fun Application.installFeatures() {
 
     install(FreeMarker) {
         templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
+    }
+
+    install(Authentication) {
+        jwt("jwt") {
+            verifier(JwtService.verifier)
+            realm = "emojiphrases app"
+            validate {
+                val payload = it.payload
+                val claim = payload.getClaim("id")
+                val claimString = claim.asString()
+                val user = db.userById(claimString)
+                user
+            }
+        }
     }
 }
 

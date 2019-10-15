@@ -1,5 +1,6 @@
 package com.rafag.model
 
+import io.ktor.auth.*
 import org.jetbrains.exposed.sql.*
 import java.io.*
 
@@ -9,7 +10,7 @@ data class User(
     val email: String,
     val displayName: String,
     val passwordHash: String
-) : Serializable
+) : Serializable, Principal
 
 object Users : Table() {
     val id = varchar("id", 20).primaryKey()
