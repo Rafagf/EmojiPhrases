@@ -4,13 +4,13 @@ import com.rafag.api.*
 import com.rafag.model.*
 import com.rafag.repository.*
 import com.rafag.webapp.*
-import com.ryanharter.ktor.moshi.*
 import freemarker.cache.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import io.ktor.features.*
 import io.ktor.freemarker.*
+import io.ktor.gson.*
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.locations.*
@@ -43,8 +43,8 @@ fun Application.module(testing: Boolean = false) {
         signUp(repository, hashFunction)
 
         //Api
-        phrase(repository)
-        login(repository, JwtService)
+        phrasesApi(repository)
+        loginApi(repository, JwtService)
     }
 }
 
@@ -60,7 +60,7 @@ private fun Application.installFeatures(db: Repository) {
         }
     }
     install(ContentNegotiation) {
-        moshi()
+        gson()
     }
 
     install(Locations)

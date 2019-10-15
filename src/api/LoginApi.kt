@@ -14,7 +14,7 @@ const val LOGIN_ENDPOINT = "/login"
 @Location(LOGIN_ENDPOINT)
 class Login
 
-fun Route.login(db: Repository, jwtService: JwtService) {
+fun Route.loginApi(db: Repository, jwtService: JwtService) {
     post<Login> {
         val params = call.receive<Parameters>()
         val userId = params["userId"] ?: return@post call.redirect(it)
