@@ -1,1 +1,1 @@
-web: ./build/install/emojiphrases/bin/emojiphrases
+web: ./build/install/emojiphrases-rafa/bin/emojiphrases
