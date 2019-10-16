@@ -3,7 +3,7 @@ package com.rafag.repository
 import com.rafag.model.*
 
 interface Repository {
-    suspend fun add(userId: String, emojiValue: String, phraseValue: String)
+    suspend fun add(userId: String, emojiValue: String, phraseValue: String): EmojiPhrase?
     suspend fun phrase(id: String): EmojiPhrase?
     suspend fun phrase(id: Int): EmojiPhrase?
     suspend fun phrases(): List<EmojiPhrase>
